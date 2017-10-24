@@ -39,3 +39,10 @@ This README would normally document whatever steps are necessary to get your app
 * game's performance is slow in the actual phone
 * sometimes the game crushes when you exit
 * the repository says there are many bugs to fix - find them
+
+### Schedule (Done by X date)
+
+* mechanics of jump/visual counter (25.10.17)
+* Bob's visualization/backround and sprite sheets Design (26.10.17 - 27.10.17)
+* game's performance (28.10.17 - 30.10.17)
+* game exit crush (30.10.17 - 31.10.17)
