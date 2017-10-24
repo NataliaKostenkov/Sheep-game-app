@@ -31,7 +31,6 @@ This README would normally document whatever steps are necessary to get your app
 
 ### TODO/Fix (missing features)
 
-24.10.17:
 * The mechanics of jump
 * adding a visual counter for successful jumps over sheep
 * ? add coins to collect
