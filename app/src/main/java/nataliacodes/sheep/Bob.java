@@ -27,10 +27,10 @@ public class Bob {
     private Rect spriteFrameToDrawBob = new Rect(0, 0, 100, 100);
     boolean isJump;//= false;
     boolean isFall;
+
     // private RectF whereToDrawBob;
     private Bitmap bitmapBob;
     // Bob methods
-
 
     // TODO how to use
     RectF whereToDrawBob;// = new RectF((int) xPosition, (int) yPosition, (int) (xPosition + bobFrameWidth / 2), (int) (yPosition + bobFrameHeight));
@@ -44,21 +44,6 @@ public class Bob {
         return whereToDrawBob;
     }
 
-    public float getXPosition() {
-        return xPosition;
-    }
-
-    public float getYPosition() {
-        return yPosition;
-    }
-
-    public void setXPosition(float xPosition) {
-        this.xPosition = xPosition;
-    }
-
-    public void setYPosition(float sheepYPosition) {
-        this.yPosition = sheepYPosition;
-    }
 
     // constructor
     public Bob(float xPosition, float yPosition, Bitmap bitmapBob) {
@@ -120,6 +105,7 @@ public class Bob {
             this.yPosition = playerGround;
             this.isJump = false;
             this.isFall = false;
+            //25.10.17
         }
 
     }
@@ -144,6 +130,23 @@ public class Bob {
     public Rect getFrameToDraw(){
         // incrementBitmapBob(); // WRONG USEGE
         return spriteFrameToDrawBob;
+    }
+
+
+    public float getXPosition() {
+        return xPosition;
+    }
+
+    public float getYPosition() {
+        return yPosition;
+    }
+
+    public void setXPosition(float xPosition) {
+        this.xPosition = xPosition;
+    }
+
+    public void setYPosition(float sheepYPosition) {
+        this.yPosition = sheepYPosition;
     }
 
 }

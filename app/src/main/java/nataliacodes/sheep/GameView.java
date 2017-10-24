@@ -79,6 +79,8 @@ public class GameView extends SurfaceView implements Runnable {
 
     private boolean firstScreen = true;
 
+    private int score;
+
     private void setSheepArray() {
 
         sheepArray.add(0, sheepA);
@@ -108,7 +110,7 @@ public class GameView extends SurfaceView implements Runnable {
             draw();
             //update(); //19.10.17
 
-//            TODO why do you need this code?
+//            TODO why do you need this code? sheep bug <---------------
             // Calculate the fps this frame
 //            timeThisFrame = System.currentTimeMillis() - startFrameTime;
 //            if (timeThisFrame >= 1) {
@@ -145,9 +147,8 @@ public class GameView extends SurfaceView implements Runnable {
         float sheepY = screenHeight / 2 + screenHeight / 4;
         Bitmap bitmapSheep = BitmapFactory.decodeResource(this.getResources(), R.drawable.transheep);
 
-        //sheepDiffLength = Utils.getRandomNum();
         Random randA = new Random();
-        sheepDiffLength = randA.nextInt(200) + 0; // randA.nextInt(200) + 50
+        sheepDiffLength = randA.nextInt(200) + 10; // randA.nextInt(200) + 50
 
         Random randB = new Random();
         sheepFirstPlaceX = randB.nextInt(200) + 1700;
@@ -160,15 +161,15 @@ public class GameView extends SurfaceView implements Runnable {
             this.sheepA = new Sheep(sheepX, sheepY, bitmapSheep, screenWidth);
             this.sheepB = new Sheep(sheepX + sheepSafeLength + sheepDiffLength, sheepY, bitmapSheep, screenWidth);
         }
-
-
-        //sheepArray = new ArrayList(2); // TODO fix creation of a new array every time
-        //setSheepArray();
-
+        
         frameLengthInMilliseconds = 50;
 
         ourHolder = getHolder(); //TODO understand what is holder!! it's the surface holder, but what is it, and why does it needed?
         gameThread = null;
+
+    }
+
+    public void scoreCount(){
 
 
     }
@@ -200,8 +201,9 @@ public class GameView extends SurfaceView implements Runnable {
             sheepArray = new ArrayList(2);
             setSheepArray();
         }
-    }
 
+        scoreCount();
+    }
 
     public void draw() {
 
