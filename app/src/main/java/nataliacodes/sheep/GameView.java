@@ -70,7 +70,7 @@ public class GameView extends SurfaceView implements Runnable {
 
     private int score;
 
-    private void setSheepArray() {
+    private void setSheepArray() { // TODO where to put this?
 
         sheepArray.add(0, sheepA);
         sheepArray.add(1, sheepB);
@@ -202,6 +202,7 @@ public class GameView extends SurfaceView implements Runnable {
             //draw sheep array
             canvas.drawBitmap((((Sheep)sheepArray.get(0))).getBitmap(), frameToDrawSheep, whereToDrawSheepA, null);
             canvas.drawBitmap(((Sheep)(sheepArray.get(1))).getBitmap(), frameToDrawSheep, whereToDrawSheepB, null);
+
 
             if ((whereToDrawSheepA.intersect(whereToDrawBob))||((whereToDrawSheepB.intersect(whereToDrawBob)))) {
                 firstScreen = true; // TODO create a method that checks intersect
