@@ -44,18 +44,7 @@ public class GameView extends SurfaceView implements Runnable {
 
     double velocity = 2 * playerJumpHeight * playerGravity;
 
-    //    float playerYVelocity = (float) (Math.sqrt(velocity));
-//    float walkSpeedPerSecond = 300;
-////    private int bobFrameWidth = 230;
-////    private int bobFrameHeight = 274;
-//    private int frameCount = 5;
-//    private int currentFrame = 0;
-//    private long lastFrameChangeTime = 0;
     private int frameLengthInMilliseconds = 50;
-////    private Rect frameToDrawBob = new Rect(0, 0, 100, 100);
-////    private Rect frameToDrawSheep = new Rect(0, 0, 100, 100);
-//
-
 
     Rect cameraFrame;
     RectF whereToDrawBob;
@@ -108,7 +97,6 @@ public class GameView extends SurfaceView implements Runnable {
 //            long startFrameTime = System.currentTimeMillis();
             update();
             draw();
-            //update(); //19.10.17
 
 //            TODO why do you need this code? sheep bug <---------------
             // Calculate the fps this frame
@@ -161,16 +149,11 @@ public class GameView extends SurfaceView implements Runnable {
             this.sheepA = new Sheep(sheepX, sheepY, bitmapSheep, screenWidth);
             this.sheepB = new Sheep(sheepX + sheepSafeLength + sheepDiffLength, sheepY, bitmapSheep, screenWidth);
         }
-        
+
         frameLengthInMilliseconds = 50;
 
         ourHolder = getHolder(); //TODO understand what is holder!! it's the surface holder, but what is it, and why does it needed?
         gameThread = null;
-
-    }
-
-    public void scoreCount(){
-
 
     }
 
@@ -202,7 +185,6 @@ public class GameView extends SurfaceView implements Runnable {
             setSheepArray();
         }
 
-        scoreCount();
     }
 
     public void draw() {

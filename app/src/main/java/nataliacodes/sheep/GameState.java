@@ -22,11 +22,13 @@ public class GameState {
 
     }
 
-    public boolean ifCollision(){
-
-        return true;
+    public boolean ifCollision() {
+        if ((whereToDrawSheepA.intersect(whereToDrawBob)) || ((whereToDrawSheepB.intersect(whereToDrawBob)))) {
+            return true;
+        }
+        else
+            return false;
     }
-
 
 
 }
