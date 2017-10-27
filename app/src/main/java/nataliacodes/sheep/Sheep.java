@@ -76,7 +76,7 @@ public class Sheep {
 
     public Sheep updateSheep() {
 
-        xPosition = xPosition - 5;//(walkSpeedPerSecond / fps);
+        xPosition = xPosition - 2;//(walkSpeedPerSecond / fps);
 
         if (xPosition < -10) {
             xPosition = width + 10;

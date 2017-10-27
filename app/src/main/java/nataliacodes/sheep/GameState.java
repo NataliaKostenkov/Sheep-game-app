@@ -1,8 +1,8 @@
 //package nataliacodes.sheep;
 //
-//import java.util.ArrayList;
+//        import java.util.ArrayList;
 //
-//import static nataliacodes.sheep.R.drawable.bob;
+//        import static nataliacodes.sheep.R.drawable.bob;
 //
 ///**
 // * Created by Waveoss on 10/6/2017.
@@ -23,7 +23,7 @@
 //    }
 //
 //    private void ifScored() {
-//        if (((bob.x) > sheepA) || (bob.x) > sheepB)){
+//        if (((bob.getXPosition()) > sheepA.getXPosition()) || (bob.getXPosition()) > sheepB.getXPosition())){
 //            score++;
 //        }
 //    }

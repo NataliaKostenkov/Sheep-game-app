@@ -47,9 +47,6 @@ public class GameView extends SurfaceView implements Runnable {
     private int frameLengthInMilliseconds = 50;
 
     Rect cameraFrame;
-    RectF whereToDrawBob;
-    RectF whereToDrawSheepA;
-    RectF whereToDrawSheepB;
     RectF cameraWhereToDraw;
     int sheepSize = 100;
 
@@ -57,24 +54,21 @@ public class GameView extends SurfaceView implements Runnable {
     private Rect frameToDrawSheep;// = new Rect (0, 0, 100, 100);
 
     private Bob bob;
-    private Sheep sheepA;
-    private Sheep sheepB;
 
     private ArrayList sheepArray; //20.10.17
 
-    private float sheepSafeLength = 600; //23.10.17
+    private float sheepSafeLength = 1000; //23.10.17
     private float sheepDiffLength;
-    private float sheepFirstPlaceX;
+    private float sheepFirstPlaceX = 2000;
 
     private boolean firstScreen = true;
 
     private int score;
+    private boolean collision;
 
-    private void setSheepArray() { // TODO where to put this?
-
-        sheepArray.add(0, sheepA);
-        sheepArray.add(1, sheepB);
-    }
+    private boolean bobPassedSheepB = false;
+    private boolean bobPassedSheepA = false;
+    private boolean bothSheepPassed = false;
 
     public GameView(Context context) {
 
@@ -82,7 +76,7 @@ public class GameView extends SurfaceView implements Runnable {
         init();
 
         playing = true;
-        firstScreen = false;
+
     }
 
     @Override
@@ -108,6 +102,32 @@ public class GameView extends SurfaceView implements Runnable {
         }
     }
 
+    private void UpdateScore() {
+
+
+        if (((((bob.getXPosition()) > (((Sheep) (sheepArray.get(0))).getXPosition())) ||
+                ((bob.getXPosition()) > (((Sheep) (sheepArray.get(1))).getXPosition())))) && (!bothSheepPassed))  {
+            score++;
+        }
+
+        // if the second sheep finished walking the screen
+        if ((((Sheep) (sheepArray.get(1))).getXPosition()) < 0) {
+            bothSheepPassed = true;
+        }
+
+        // let frames go by
+
+
+
+    }
+
+    public boolean ifCollision() {
+        if ((((Sheep) (sheepArray.get(0))).getWhereToDrawSheep().intersect(bob.getWhereToDrawBob())) ||
+                ((((Sheep) (sheepArray.get(1))).getWhereToDrawSheep().intersect(bob.getWhereToDrawBob())))) {
+            return true;
+        } else
+            return false;
+    }
 
     private void init() {
 
@@ -135,25 +155,23 @@ public class GameView extends SurfaceView implements Runnable {
         float sheepY = screenHeight / 2 + screenHeight / 4;
         Bitmap bitmapSheep = BitmapFactory.decodeResource(this.getResources(), R.drawable.transheep);
 
-        Random randA = new Random();
-        sheepDiffLength = randA.nextInt(200) + 10; // randA.nextInt(200) + 50
-
-        Random randB = new Random();
-        sheepFirstPlaceX = randB.nextInt(200) + 1700;
+        //TODO use random to generate new sheep always - not only once during the init
+        //Random randA = new Random();
 
         if (firstScreen) {
-            this.sheepA = new Sheep(sheepFirstPlaceX, sheepY, bitmapSheep, screenWidth);
-            this.sheepB = new Sheep(sheepFirstPlaceX + sheepSafeLength + sheepDiffLength, sheepY, bitmapSheep, screenWidth);
-        }
-        else{
-            this.sheepA = new Sheep(sheepX, sheepY, bitmapSheep, screenWidth);
-            this.sheepB = new Sheep(sheepX + sheepSafeLength + sheepDiffLength, sheepY, bitmapSheep, screenWidth);
+            this.sheepArray = new ArrayList(2); //TODO fix - create 1 time per game only
+            sheepArray.add(0, new Sheep(sheepFirstPlaceX, sheepY, bitmapSheep, screenWidth));
+            sheepArray.add(1, new Sheep(sheepFirstPlaceX + sheepSafeLength, sheepY, bitmapSheep, screenWidth));
+            //bothSheepPassed = false;
+            firstScreen = false;
         }
 
         frameLengthInMilliseconds = 50;
 
         ourHolder = getHolder(); //TODO understand what is holder!! it's the surface holder, but what is it, and why does it needed?
         gameThread = null;
+
+        score = 0;
 
     }
 
@@ -173,19 +191,14 @@ public class GameView extends SurfaceView implements Runnable {
         updateCameraBackground();
         bob.handleJump();
 
-        // 15.10.17
-//            Bob.whereToDrawBob.set((int) bobXPosition, (int) bobYPosition, (int) (bobXPosition + bobFrameWidth / 2), (int) (bobYPosition + bobFrameHeight));
-//            Sheep.whereToDrawSheep.set((int) sheepXPosition, (int) sheepYPosition, (int) (sheepXPosition + sheepSize), (int) (sheepYPosition + sheepSize));
-        whereToDrawBob = bob.getWhereToDrawBob();
-        whereToDrawSheepA = sheepA.getWhereToDrawSheep();
-        whereToDrawSheepB = sheepB.getWhereToDrawSheep();
+        UpdateScore();
 
-        if (cameraX + screenWidth >= backgroundWidth / 2) {
-            sheepArray = new ArrayList(2);
-            setSheepArray();
+        if (ifCollision()) {
+            firstScreen = true;
         }
 
     }
+
 
     public void draw() {
 
@@ -196,19 +209,24 @@ public class GameView extends SurfaceView implements Runnable {
             //draw background on canvas not on screen!!!
             canvas.drawBitmap(bitmapBackground, cameraFrame, cameraWhereToDraw, null);
             //draw bob
-            // canvas.drawBitmap(bob.getBitmap(),frameToDrawBob, whereToDrawBob, null);
-            canvas.drawBitmap(bob.getBitmap(), bob.getFrameToDraw(), whereToDrawBob, null);
+            canvas.drawBitmap(bob.getBitmap(), bob.getFrameToDraw(), bob.getWhereToDrawBob(), null);
 
-            //draw sheep array
-            canvas.drawBitmap((((Sheep)sheepArray.get(0))).getBitmap(), frameToDrawSheep, whereToDrawSheepA, null);
-            canvas.drawBitmap(((Sheep)(sheepArray.get(1))).getBitmap(), frameToDrawSheep, whereToDrawSheepB, null);
+            //draw sheep array TODO use generics instead of down casting
+            //TODO fix frame to draw sheep - not initialized
+            canvas.drawBitmap(((Sheep) (sheepArray.get(0))).getBitmap(), frameToDrawSheep, ((Sheep) (sheepArray.get(0))).getWhereToDrawSheep(), null);
+            canvas.drawBitmap(((Sheep) (sheepArray.get(1))).getBitmap(), frameToDrawSheep, ((Sheep) (sheepArray.get(1))).getWhereToDrawSheep(), null);
 
+            // draw score
+            Paint paint = new Paint();
+            paint.setColor(Color.BLUE);
+            paint.setTextSize(70);
+            canvas.drawText("Score: " + score, 60, 80, paint);
 
-            if ((whereToDrawSheepA.intersect(whereToDrawBob))||((whereToDrawSheepB.intersect(whereToDrawBob)))) {
-                firstScreen = true; // TODO create a method that checks intersect
+            if (ifCollision()) {
+
                 // TODO, this is not the correct place for this code line
                 // put this code at Utils
-                Paint paint = new Paint();
+                //Paint paint = new Paint();
                 paint.setColor(Color.RED);
                 paint.setTextSize(300);
                 canvas.drawText("Game Over", 175, 400, paint);
