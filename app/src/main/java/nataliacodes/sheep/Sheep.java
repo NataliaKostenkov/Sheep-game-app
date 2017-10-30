@@ -18,16 +18,14 @@ public class Sheep {
     private static final int sheepSize = 100; //TODO it supposed to use a specific ratio that depends on the screen size. Think how to do it!
     private Bitmap bitmapSheep;
     private RectF whereToDrawSheep;
-    Sheep sheep ;//= new Sheep(xPosition,yPosition,currentFrame,frameToDrawSheep);
-    float width;
+//    Sheep sheep ;//= new Sheep(xPosition,yPosition,currentFrame,frameToDrawSheep);
+    private float width;
+    private boolean passedOver;
 
-    public void setWhereToDrawSheep(RectF whereToDrawSheep) {
-        updateSheep();
-        whereToDrawSheep.set(xPosition, yPosition, xPosition+sheepSize, yPosition+sheepSize);
-    }
 
     public RectF getWhereToDrawSheep() {
-        setWhereToDrawSheep(whereToDrawSheep);
+        updateSheep();
+        whereToDrawSheep.set(xPosition, yPosition, xPosition+sheepSize, yPosition+sheepSize);
         return whereToDrawSheep;
     }
 
@@ -41,6 +39,10 @@ public class Sheep {
     public float getYPosition() {
         return yPosition;
     }
+
+    public boolean getPassedOver() {
+        return passedOver;
+    } //
 
     public int getCurrentFrame() {
         return currentFrame;
@@ -58,6 +60,10 @@ public class Sheep {
         this.yPosition = sheepYPosition;
     }
 
+    public void setPassedOver(boolean passedOver) {
+        this.passedOver = passedOver;
+    } //
+
     public void setCurrentFrame(int currentFrame) {
         this.currentFrame = currentFrame;
     }
@@ -72,14 +78,17 @@ public class Sheep {
         this.bitmapSheep = Bitmap.createScaledBitmap(bitmapSheep, sheepSize, sheepSize, false);
         this.whereToDrawSheep = new RectF(xPosition, yPosition, xPosition+sheepSize, yPosition+sheepSize);
         this.width = screenWidth;
+        this.passedOver = false;
     }
 
-    public Sheep updateSheep() {
+    public Sheep updateSheep()  {
 
         xPosition = xPosition - 2;//(walkSpeedPerSecond / fps);
 
+        // if finished screen
         if (xPosition < -10) {
             xPosition = width + 10;
+
         }
         return this; // TODO what is this?
     }
