@@ -16,6 +16,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.media.MediaPlayer;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -75,8 +76,7 @@ public class GameView extends SurfaceView implements Runnable {
     private float coinY = 500;
 
     private int coins;
-
-    public GameManager manager;
+    private SoundPlayer sound;
 
     public GameView(Context context) {
 
@@ -84,7 +84,7 @@ public class GameView extends SurfaceView implements Runnable {
         init();
 
         playing = true;
-
+        sound = new SoundPlayer(context); //31.10.17
     }
 
     @Override
@@ -117,6 +117,7 @@ public class GameView extends SurfaceView implements Runnable {
             if (bob.getXPosition() > currentSheep.getXPosition() && !(currentSheep.getPassedOver())) {
                 currentSheep.setPassedOver(true);
                 score++;
+                sound.playSheep();
             }
             if (currentSheep.getXPosition() > screenWidth) {
                 currentSheep.setPassedOver(false);
@@ -133,6 +134,7 @@ public class GameView extends SurfaceView implements Runnable {
             if ((currentCoin.getWhereToDrawCoin().intersect(bob.getWhereToDrawBob())) && (!currentCoin.getPassedOver())) {
                 currentCoin.setPassedOver(true);
                 coins++;
+                sound.playCoin();
             }
         }
     }
@@ -240,6 +242,10 @@ public class GameView extends SurfaceView implements Runnable {
             Coin currentCoin = coinArray.get(i);
             currentCoin.updateCoin();
         }
+    }
+
+    private void playSoundIfJumped(){
+
     }
 
     public void draw() {
