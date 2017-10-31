@@ -23,6 +23,7 @@ public class Sheep {
     private boolean passedOver;
 
 
+
     public RectF getWhereToDrawSheep() {
         updateSheep();
         whereToDrawSheep.set(xPosition, yPosition, xPosition+sheepSize, yPosition+sheepSize);

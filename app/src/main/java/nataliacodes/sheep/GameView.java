@@ -23,6 +23,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class GameView extends SurfaceView implements Runnable {
 
@@ -51,10 +52,12 @@ public class GameView extends SurfaceView implements Runnable {
 
     private Rect frameToDrawBob;// = new Rect(0, 0, 100, 100); // 15.10.17  TODO rename
     private Rect frameToDrawSheep;// = new Rect (0, 0, 100, 100);
+    private Rect frameToDrawCoin;
 
     private Bob bob;
 
     private ArrayList<Sheep> sheepArray; //20.10.17
+    private ArrayList<Coin> coinArray;
 
     private float sheepSafeLength = 500; //23.10.17
     private float sheepDiffLength;
@@ -64,7 +67,16 @@ public class GameView extends SurfaceView implements Runnable {
 
     private int score;
 
-    private int arraySize = 3;
+    private int sheepArraySize = 3;
+
+    private int coinArraySize = 5;
+    private float coinFirstPlaceX = 1200;
+    private float coinSafeLength = 200;
+    private float coinY = 500;
+
+    private int coins;
+
+    public GameManager manager;
 
     public GameView(Context context) {
 
@@ -114,6 +126,17 @@ public class GameView extends SurfaceView implements Runnable {
 
     }
 
+    public void ifCaughtCoin() {
+
+        for (int i = 0; i < coinArray.size(); ++i) {
+            Coin currentCoin = coinArray.get(i);
+            if ((currentCoin.getWhereToDrawCoin().intersect(bob.getWhereToDrawBob())) && (!currentCoin.getPassedOver())) {
+                currentCoin.setPassedOver(true);
+                coins++;
+            }
+        }
+    }
+
     public boolean ifCollision() {
 
         for (int i = 0; i < sheepArray.size(); ++i) {
@@ -151,14 +174,27 @@ public class GameView extends SurfaceView implements Runnable {
         float sheepY = screenHeight / 2 + screenHeight / 4;
         Bitmap bitmapSheep = BitmapFactory.decodeResource(this.getResources(), R.drawable.transheep);
 
-        //TODO use random to generate new sheep always - not only once during the init
-        //Random randA = new Random();
-
-        this.sheepArray = new ArrayList(arraySize); //TODO fix - create 1 time per game only
+        this.sheepArray = new ArrayList(sheepArraySize); //TODO fix - create 1 time per game only
         // TODO fix array is not dynamic?
-        for (int i = 0; i < arraySize; ++i) { //TODO is the loop correct using arraySize
-            sheepArray.add(i, new Sheep(sheepFirstPlaceX + i * sheepSafeLength, sheepY, bitmapSheep, screenWidth));
+        for (int i = 0; i < sheepArraySize; ++i) { //TODO is the loop correct using arraySize
+            Random rand = new Random();
+            sheepDiffLength = rand.nextInt(200) + 10; // max 200 min 10
+            sheepArray.add(i, new Sheep(sheepFirstPlaceX + i * sheepSafeLength + sheepDiffLength, sheepY, bitmapSheep/*getBitmap()?*/, screenWidth));
         }
+
+
+        Bitmap bitmapCoin = BitmapFactory.decodeResource(this.getResources(), R.drawable.coin);
+
+        this.coinArray = new ArrayList(coinArraySize);
+        for (int i = 0; i < coinArraySize; ++i) {
+            //Random rand = new Random();
+            //coinDiffLength = rand.nextInt(200) + 10; // max 200 min 10
+            coinArray.add(i, new Coin(coinFirstPlaceX + i * coinSafeLength, coinY, bitmapCoin));
+        }
+
+        //manager = new GameManager()
+
+        //manager.createNewSheepArray();
 
         frameLengthInMilliseconds = 50;
 
@@ -166,6 +202,7 @@ public class GameView extends SurfaceView implements Runnable {
         gameThread = null;
 
         score = 0;
+        coins = 0;
 
     }
 
@@ -188,10 +225,21 @@ public class GameView extends SurfaceView implements Runnable {
 
         UpdateScore();
 
+        updateCoins();
+
+        ifCaughtCoin();
+
         if (ifCollision()) {
             firstScreen = true;
         }
 
+    }
+
+    private void updateCoins() {
+        for (int i = 0; i < coinArray.size(); ++i) {
+            Coin currentCoin = coinArray.get(i);
+            currentCoin.updateCoin();
+        }
     }
 
     public void draw() {
@@ -213,11 +261,19 @@ public class GameView extends SurfaceView implements Runnable {
                 canvas.drawBitmap(((currentSheep)).getBitmap(), frameToDrawSheep, ((currentSheep)).getWhereToDrawSheep(), null);
             }
 
+            for (int i = 0; i < coinArray.size(); ++i) {
+                Coin currentCoin = coinArray.get(i);
+                if (!currentCoin.getPassedOver()) {
+                    canvas.drawBitmap(((currentCoin)).getBitmap(), frameToDrawCoin, ((currentCoin)).getWhereToDrawCoin(), null);
+                }
+            }
+
             // draw score
             Paint paint = new Paint();
             paint.setColor(Color.BLUE);
             paint.setTextSize(70);
             canvas.drawText("Score: " + score, 60, 80, paint);
+            canvas.drawText("Coins: " + coins, 60, 140, paint); // TODO add a coin picture instead text
 
             if (ifCollision()) {
                 //Paint paint = new Paint();
