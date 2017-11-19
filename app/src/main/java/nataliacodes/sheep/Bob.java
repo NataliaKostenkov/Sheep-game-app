@@ -8,16 +8,16 @@ import android.graphics.RectF;
  * Created by Waveoss on 10/6/2017.
  */
 
-public class Bob {
+public class Bob extends Character{
 
-    private float xPosition;
-    private float yPosition;
+    //private float xPosition;
+    //private float yPosition;
     float playerJumpHeight = 150;
     float playerGravity = (float) 0.75;   //Whenever the character falls, he will descend at this rate.
     float playerGround = 680;
     double velocity = 2 * playerJumpHeight * playerGravity;
     float playerYVelocity = (float) (Math.sqrt(velocity));
-    //    float walkSpeedPerSecond = 300;
+    float jumpSpeed = 25;
     private int bobFrameWidth = 230;
     private int bobFrameHeight = 274;
     private static final int frameCount = 5;//= 5;
@@ -25,8 +25,12 @@ public class Bob {
     private long lastFrameChangeTime;//= 0;
     private int frameLengthInMilliseconds = 50;
     private Rect spriteFrameToDrawBob = new Rect(0, 0, 100, 100);
-    boolean isJump;//= false;
+    volatile boolean isJump;//= false;
     boolean isFall;
+
+    float previousJumpPos;
+    float posJump = 0;
+    int numOfFrames = 0;
 
     // private RectF whereToDrawBob;
     private Bitmap bitmapBob;
@@ -36,7 +40,7 @@ public class Bob {
     RectF whereToDrawBob;// = new RectF((int) xPosition, (int) yPosition, (int) (xPosition + bobFrameWidth / 2), (int) (yPosition + bobFrameHeight));
 
     public void setWhereToDrawBob(RectF whereToDrawBob) {
-      whereToDrawBob.set((int) xPosition, (int) yPosition, (int) (xPosition + bobFrameWidth / 2), (int) (yPosition + bobFrameHeight));
+        whereToDrawBob.set((int) getXPosition(), (int) getYPosition(), (int) (getXPosition() + bobFrameWidth / 2), (int) (getYPosition() + bobFrameHeight));
     }
 
     public RectF getWhereToDrawBob() {
@@ -47,8 +51,9 @@ public class Bob {
 
     // constructor
     public Bob(float xPosition, float yPosition, Bitmap bitmapBob) {
-        this.xPosition = xPosition;
-        this.yPosition = yPosition;
+       // this.xPosition = xPosition;
+        //this.yPosition = yPosition;
+        super(xPosition,yPosition);
         this.spriteFrameIndex = 0;
         this.spriteFrameToDrawBob = new Rect(0, 0, bobFrameWidth, bobFrameHeight);
         this.isJump = false;
@@ -75,7 +80,7 @@ public class Bob {
         }
 
         //updateFrame the left and right values of the source of
-        //the next frame on the spritesheet
+        //the next frame on the sprite sheet
         spriteFrameToDrawBob.left = spriteFrameIndex * (bobFrameWidth / 5) - 4;
         spriteFrameToDrawBob.right = spriteFrameToDrawBob.left + (bobFrameWidth / 4) - 12;
 
@@ -86,31 +91,19 @@ public class Bob {
 
     public void handleJump() {
         if (isJump) {
-            if (!isFall) {
-                this.yPosition = yPosition - playerYVelocity;
+            numOfFrames += 2; // acceleration of speed?
+            //yPosition -=  jumpSpeed * Math.sin(Math.PI*(numOfFrames + 90) / 180.0);
+            setYPosition((float)(getYPosition() - jumpSpeed * Math.sin(Math.PI*(numOfFrames + 90) / 180.0)));
+            if (getYPosition() >= playerGround - 1) {//playerJumpHeight
+                //playeraction = PLAYER_STAND; -switch
+                setIsJump(false);
+                setYPosition(playerGround);
+                numOfFrames = 0;
             }
-
-            if ((isFall) && (!(yPosition == playerJumpHeight))) { // player is in the second stage of jump
-                this.yPosition = yPosition + playerYVelocity;
-            }
-
-            // not equal because the velocity might not divide jump height
-            if (yPosition < playerJumpHeight) {
-                this.isFall = true;
-            }
-        }
-
-        // we "finished" jumping
-        if (yPosition >= playerGround) {
-            this.yPosition = playerGround;
-            this.isJump = false;
-            this.isFall = false;
-            //25.10.17
         }
 
     }
 
-    // TODO check if thread safe (can be multi threaded)
     public void setIsJump(Boolean isJump) {
         this.isJump = isJump;
     }
@@ -123,30 +116,12 @@ public class Bob {
      * @return
      */
     public Bitmap getBitmap() {
-        incrementBitmapBob(); // WRONG USEGE
+        incrementBitmapBob(); // WRONG USAGE
         return bitmapBob;
     }
 
-    public Rect getFrameToDraw(){
-        // incrementBitmapBob(); // WRONG USEGE
+    public Rect getFrameToDraw() {
         return spriteFrameToDrawBob;
-    }
-
-
-    public float getXPosition() {
-        return xPosition;
-    }
-
-    public float getYPosition() {
-        return yPosition;
-    }
-
-    public void setXPosition(float xPosition) {
-        this.xPosition = xPosition;
-    }
-
-    public void setYPosition(float sheepYPosition) {
-        this.yPosition = sheepYPosition;
     }
 
 }

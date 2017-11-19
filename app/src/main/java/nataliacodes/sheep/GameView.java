@@ -16,7 +16,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.media.MediaPlayer;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -37,8 +36,6 @@ public class GameView extends SurfaceView implements Runnable {
     float backgroundWidth; // equals to 2*screenWidth
     float screenHeight;
     float screenWidth;
-    float cameraX = 0; //24.09.17
-    Bitmap bitmapBackground;
 
     float playerJumpHeight = 150;
     float playerGravity = (float) 0.75;   //Whenever the character falls, he will descend at this rate.
@@ -47,7 +44,6 @@ public class GameView extends SurfaceView implements Runnable {
 
     private int frameLengthInMilliseconds = 50;
 
-    Rect cameraFrame;
     RectF cameraWhereToDraw;
     int sheepSize = 100;
 
@@ -64,8 +60,6 @@ public class GameView extends SurfaceView implements Runnable {
     private float sheepDiffLength;
     private float sheepFirstPlaceX = 2000;
 
-    private boolean firstScreen = true;
-
     private int score;
 
     private int sheepArraySize = 3;
@@ -77,6 +71,17 @@ public class GameView extends SurfaceView implements Runnable {
 
     private int coins;
     private SoundPlayer sound;
+
+    DrawableLayout sky;
+    DrawableLayout cloud;
+    DrawableLayout hills;
+    DrawableLayout ground;
+
+    //TODO fix
+    int skySpeed = 0;
+    int cloudSpeed = 4;
+    int hillsSpeed = 3;
+    int groundSpeed = 5;
 
     public GameView(Context context) {
 
@@ -122,7 +127,6 @@ public class GameView extends SurfaceView implements Runnable {
             if (currentSheep.getXPosition() > screenWidth) {
                 currentSheep.setPassedOver(false);
             }
-
         }
 
     }
@@ -153,37 +157,39 @@ public class GameView extends SurfaceView implements Runnable {
     private void init() {
 
         DisplayMetrics metrics = new DisplayMetrics();
-        ((Activity) getContext()).getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        ((Activity) getContext()).getWindowManager().getDefaultDisplay().getMetrics(metrics); //TODO do we need this line of code?
         screenHeight = (float) metrics.heightPixels;
         screenWidth = (float) metrics.widthPixels;
-        backgroundWidth = 2 * screenWidth;
+        backgroundWidth = 2 * screenWidth; //TODO init in function,Do I need it here
 
-        cameraX = 0;
-        cameraFrame = new Rect((int) cameraX, 0, (int) (screenWidth + cameraX), (int) screenHeight);
+        //cameraX = 0;
+        //cameraFrame = new Rect((int) cameraX, 0, (int) (screenWidth + cameraX), (int) screenHeight);
         cameraWhereToDraw = new RectF(0, 0, screenWidth, screenHeight);
 
-        bitmapBackground = BitmapFactory.decodeResource(this.getResources(), R.drawable.background);
-        bitmapBackground = Bitmap.createScaledBitmap(bitmapBackground, (int) backgroundWidth, (int) screenHeight, false);
+        //TODO fix the draw() method to support the new DrawableLayout objects!
+        sky = new DrawableLayout(screenHeight, screenWidth, 0, R.drawable.sky, this.getResources(), (int) backgroundWidth, skySpeed);
+        cloud = new DrawableLayout(screenHeight, screenWidth, 0, R.drawable.cloud, this.getResources(), (int) backgroundWidth,cloudSpeed);
+        hills = new DrawableLayout(screenHeight, screenWidth, 0, R.drawable.hills, this.getResources(), (int) backgroundWidth, hillsSpeed);
+        ground = new DrawableLayout(screenHeight, screenWidth, 0, R.drawable.ground, this.getResources(), (int) backgroundWidth, groundSpeed);
 
         // init bob
         float bobX = screenWidth / 2;
-        float bobY = screenHeight / 2 + screenHeight / 4;
+        float bobY = 640;//screenHeight / 2 + screenHeight / 4; //TODO fix
         Bitmap bobBitmapImageFactory = BitmapFactory.decodeResource(this.getResources(), R.drawable.bob);
         this.bob = new Bob(bobX, bobY, bobBitmapImageFactory);
 
         // init sheep
         float sheepX = screenWidth + 15;
         float sheepY = screenHeight / 2 + screenHeight / 4;
-        Bitmap bitmapSheep = BitmapFactory.decodeResource(this.getResources(), R.drawable.transheep);
+        Bitmap bitmapSheep = BitmapFactory.decodeResource(this.getResources(), R.drawable.sheep);
 
         this.sheepArray = new ArrayList(sheepArraySize); //TODO fix - create 1 time per game only
         // TODO fix array is not dynamic?
-        for (int i = 0; i < sheepArraySize; ++i) { //TODO is the loop correct using arraySize
+        for (int i = 0; i < sheepArraySize; ++i) { //TODO is the loop correct using sheepArraySize
             Random rand = new Random();
-            sheepDiffLength = rand.nextInt(200) + 10; // max 200 min 10
+            sheepDiffLength = rand.nextInt(200) + 50; // max 200 min 50
             sheepArray.add(i, new Sheep(sheepFirstPlaceX + i * sheepSafeLength + sheepDiffLength, sheepY, bitmapSheep/*getBitmap()?*/, screenWidth));
         }
-
 
         Bitmap bitmapCoin = BitmapFactory.decodeResource(this.getResources(), R.drawable.coin);
 
@@ -193,10 +199,6 @@ public class GameView extends SurfaceView implements Runnable {
             //coinDiffLength = rand.nextInt(200) + 10; // max 200 min 10
             coinArray.add(i, new Coin(coinFirstPlaceX + i * coinSafeLength, coinY, bitmapCoin));
         }
-
-        //manager = new GameManager()
-
-        //manager.createNewSheepArray();
 
         frameLengthInMilliseconds = 50;
 
@@ -208,32 +210,22 @@ public class GameView extends SurfaceView implements Runnable {
 
     }
 
-    public void updateCameraBackground() {
-
-        // if we finished walking the background image loop it again
-        if (cameraX + screenWidth >= backgroundWidth) {
-            cameraX = 0;
-        } else {
-            cameraX = cameraX + 5;
-        }
-        cameraFrame = new Rect((int) cameraX, 0, (int) (screenWidth + cameraX), (int) screenHeight);
+    public void updateBackground(DrawableLayout layout) {
+        layout.updateLayoutX();
+        layout.setCameraFrame();
     }
 
     public void update() {
 
+        //updateBackground(sky);
+        updateBackground(cloud);
+        updateBackground(hills);
+        updateBackground(ground);
 
-        updateCameraBackground();
         bob.handleJump();
-
         UpdateScore();
-
         updateCoins();
-
         ifCaughtCoin();
-
-        if (ifCollision()) {
-            firstScreen = true;
-        }
 
     }
 
@@ -244,9 +236,6 @@ public class GameView extends SurfaceView implements Runnable {
         }
     }
 
-    private void playSoundIfJumped(){
-
-    }
 
     public void draw() {
 
@@ -254,8 +243,13 @@ public class GameView extends SurfaceView implements Runnable {
 
             //lock canvas
             canvas = ourHolder.lockCanvas();
-            //draw background on canvas not on screen!!!
-            canvas.drawBitmap(bitmapBackground, cameraFrame, cameraWhereToDraw, null);
+            //draw background on canvas not on screen
+
+            canvas.drawBitmap(sky.getBitmap(), sky.getCameraFrame(), cameraWhereToDraw, null);
+            canvas.drawBitmap(hills.getBitmap(), hills.getCameraFrame(), cameraWhereToDraw, null);
+            canvas.drawBitmap(cloud.getBitmap(), cloud.getCameraFrame(), cameraWhereToDraw, null);
+            canvas.drawBitmap(ground.getBitmap(), ground.getCameraFrame(), cameraWhereToDraw, null);
+
             //draw bob
             canvas.drawBitmap(bob.getBitmap(), bob.getFrameToDraw(), bob.getWhereToDrawBob(), null);
 
@@ -281,21 +275,21 @@ public class GameView extends SurfaceView implements Runnable {
             canvas.drawText("Score: " + score, 60, 80, paint);
             canvas.drawText("Coins: " + coins, 60, 140, paint); // TODO add a coin picture instead text
 
-            if (ifCollision()) {
-                //Paint paint = new Paint();
-                paint.setColor(Color.RED);
-                paint.setTextSize(300);
-                canvas.drawText("Game Over", 175, 400, paint);
-                ourHolder.unlockCanvasAndPost(canvas);
-
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException ex) {
-                    Thread.currentThread().interrupt();
-                }
-                init();
-                run();
-            }
+//            if (ifCollision()) {
+//                //Paint paint = new Paint();
+//                paint.setColor(Color.RED);
+//                paint.setTextSize(300);
+//                canvas.drawText("Game Over", 175, 400, paint);
+//                ourHolder.unlockCanvasAndPost(canvas);
+//
+//                try {
+//                    Thread.sleep(3000);
+//                } catch (InterruptedException ex) {
+//                    Thread.currentThread().interrupt();
+//                }
+//                init();
+//                run();
+//            }
 
             // Draw everything to the screen
             ourHolder.unlockCanvasAndPost(canvas);
@@ -327,7 +321,7 @@ public class GameView extends SurfaceView implements Runnable {
 
             //  has touched the screen
             case MotionEvent.ACTION_DOWN:
-                bob.setIsJump(true);//old: isJump = true;
+                bob.setIsJump(true);
                 break;
             //  has removed finger from screen
             case MotionEvent.ACTION_UP:

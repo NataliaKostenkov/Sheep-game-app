@@ -18,16 +18,18 @@ public class SoundPlayer {
 
         soundPool = new SoundPool(2, AudioManager.STREAM_MUSIC, 0);
 
-        sheep = soundPool.load(context, R.raw.sheepsound, 1);
+        sheep = soundPool.load(context, R.raw.sheepsound, 2);
         coin = soundPool.load(context, R.raw.coin, 2);
+
     }
 
-    public void playSheep() {
+    public void playSheep() { //play(int soundID, float leftVolume, float rightVolume, int priority, int loop, float rate)
         soundPool.play(sheep, 1.0f, 1.0f, 1, 0, 1.0f);
     }
 
     public void playCoin() {
         soundPool.play(coin, 1.0f, 1.0f, 1, 0, 1.0f);
     }
+
 
 }

@@ -70,7 +70,7 @@ public class GameManager {
     }
 
 //    public void createNewSheepArray() { // init game manager? constructor?
-//        Bitmap bitmapSheep = BitmapFactory.decodeResource(this.getResources(), R.drawable.transheep);
+//        Bitmap bitmapSheep = BitmapFactory.decodeResource(this.getResources(), R.drawable.sheep);
 //        sheep = new ArrayList(arraySize); //TODO fix - create 1 time per game only
 //        for (int i = 0; i < arraySize; ++i) { //TODO is the loop correct using arraySize
 //            Random rand = new Random();
@@ -111,7 +111,7 @@ public class GameManager {
 //    }
 
 //    public void updateSheep(float sheepXPosition,float screenWidth) {
-//        sheepXPosition = sheepXPosition - 5;//(walkSpeedPerSecond / fps);
+//        sheepXPosition = sheepXPosition - 5;//(jumpSpeed / fps);
 //
 //        if (sheepXPosition < 10) {
 //            sheepXPosition = screenWidth + 10;
