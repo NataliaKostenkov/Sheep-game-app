@@ -51,7 +51,7 @@ public class GameView extends SurfaceView implements Runnable {
     private Rect frameToDrawSheep;// = new Rect (0, 0, 100, 100);
     private Rect frameToDrawCoin;
 
-    private Bob bob;
+    private Player player;
 
     private ArrayList<Sheep> sheepArray; //20.10.17
     private ArrayList<Coin> coinArray;
@@ -119,7 +119,7 @@ public class GameView extends SurfaceView implements Runnable {
 
         for (int i = 0; i < sheepArray.size(); ++i) {
             Sheep currentSheep = sheepArray.get(i);
-            if (bob.getXPosition() > currentSheep.getXPosition() && !(currentSheep.getPassedOver())) {
+            if (player.getXPosition() > currentSheep.getXPosition() && !(currentSheep.getPassedOver())) {
                 currentSheep.setPassedOver(true);
                 score++;
                 sound.playSheep();
@@ -127,6 +127,8 @@ public class GameView extends SurfaceView implements Runnable {
             if (currentSheep.getXPosition() > screenWidth) {
                 currentSheep.setPassedOver(false);
             }
+
+            currentSheep.updateSheep();
         }
 
     }
@@ -135,7 +137,7 @@ public class GameView extends SurfaceView implements Runnable {
 
         for (int i = 0; i < coinArray.size(); ++i) {
             Coin currentCoin = coinArray.get(i);
-            if ((currentCoin.getWhereToDrawCoin().intersect(bob.getWhereToDrawBob())) && (!currentCoin.getPassedOver())) {
+            if ((currentCoin.getWhereToDrawCoin().intersect(player.getWhereToDrawPlayer())) && (!currentCoin.getPassedOver())) {
                 currentCoin.setPassedOver(true);
                 coins++;
                 sound.playCoin();
@@ -147,7 +149,7 @@ public class GameView extends SurfaceView implements Runnable {
 
         for (int i = 0; i < sheepArray.size(); ++i) {
             Sheep currentSheep = sheepArray.get(i);
-            if (currentSheep.getWhereToDrawSheep().intersect(bob.getWhereToDrawBob())) {
+            if (currentSheep.getWhereToDrawSheep().intersect(player.getWhereToDrawPlayer())) {
                 return true;
             }
         }
@@ -168,35 +170,33 @@ public class GameView extends SurfaceView implements Runnable {
 
         //TODO fix the draw() method to support the new DrawableLayout objects!
         sky = new DrawableLayout(screenHeight, screenWidth, 0, R.drawable.sky, this.getResources(), (int) backgroundWidth, skySpeed);
-        cloud = new DrawableLayout(screenHeight, screenWidth, 0, R.drawable.cloud, this.getResources(), (int) backgroundWidth,cloudSpeed);
+        cloud = new DrawableLayout(screenHeight, screenWidth, 0, R.drawable.cloud, this.getResources(), (int) backgroundWidth, cloudSpeed);
         hills = new DrawableLayout(screenHeight, screenWidth, 0, R.drawable.hills, this.getResources(), (int) backgroundWidth, hillsSpeed);
         ground = new DrawableLayout(screenHeight, screenWidth, 0, R.drawable.ground, this.getResources(), (int) backgroundWidth, groundSpeed);
 
-        // init bob
-        float bobX = screenWidth / 2;
-        float bobY = 640;//screenHeight / 2 + screenHeight / 4; //TODO fix
-        Bitmap bobBitmapImageFactory = BitmapFactory.decodeResource(this.getResources(), R.drawable.bob);
-        this.bob = new Bob(bobX, bobY, bobBitmapImageFactory);
+        // init player
+        float playerX = screenWidth / 2;
+        float playerY = screenHeight * 5 / 6; //TODO fix
+        Bitmap playerBitmapImageFactory = BitmapFactory.decodeResource(this.getResources(), R.drawable.player);
+        this.player = new Player(playerX, playerY, playerBitmapImageFactory);
 
         // init sheep
         float sheepX = screenWidth + 15;
-        float sheepY = screenHeight / 2 + screenHeight / 4;
+        float sheepY = screenHeight * 5 / 6;
         Bitmap bitmapSheep = BitmapFactory.decodeResource(this.getResources(), R.drawable.sheep);
-
         this.sheepArray = new ArrayList(sheepArraySize); //TODO fix - create 1 time per game only
+
         // TODO fix array is not dynamic?
         for (int i = 0; i < sheepArraySize; ++i) { //TODO is the loop correct using sheepArraySize
             Random rand = new Random();
             sheepDiffLength = rand.nextInt(200) + 50; // max 200 min 50
-            sheepArray.add(i, new Sheep(sheepFirstPlaceX + i * sheepSafeLength + sheepDiffLength, sheepY, bitmapSheep/*getBitmap()?*/, screenWidth));
+            sheepArray.add(i, new Sheep(sheepFirstPlaceX + i * sheepSafeLength + sheepDiffLength, sheepY, bitmapSheep/*getBitmap()?*/, screenWidth, groundSpeed));
         }
 
         Bitmap bitmapCoin = BitmapFactory.decodeResource(this.getResources(), R.drawable.coin);
 
         this.coinArray = new ArrayList(coinArraySize);
         for (int i = 0; i < coinArraySize; ++i) {
-            //Random rand = new Random();
-            //coinDiffLength = rand.nextInt(200) + 10; // max 200 min 10
             coinArray.add(i, new Coin(coinFirstPlaceX + i * coinSafeLength, coinY, bitmapCoin));
         }
 
@@ -217,14 +217,25 @@ public class GameView extends SurfaceView implements Runnable {
 
     public void update() {
 
-        //updateBackground(sky);
         updateBackground(cloud);
         updateBackground(hills);
         updateBackground(ground);
 
-        bob.handleJump();
+        int max1 = 50;
+        int max2 = 100;
+        int min1 = 0;
+        int min2 = 0;
+
+        int coinsSize = 100;
+        int sheepSize = 100;
+
+        updateEntityArray(coinsSize, coinArray, max1, min1);
+        updateEntityArray(sheepSize, sheepArray, max2, min2);
+
+        player.handleJump();
         UpdateScore();
         updateCoins();
+
         ifCaughtCoin();
 
     }
@@ -233,6 +244,33 @@ public class GameView extends SurfaceView implements Runnable {
         for (int i = 0; i < coinArray.size(); ++i) {
             Coin currentCoin = coinArray.get(i);
             currentCoin.updateCoin();
+        }
+    }
+
+    public void updateEntityArray(int entitySize, ArrayList<? extends Entity> array, int max, int min) {
+        if (checkIfArrayOutOfScreen(array.get(array.size() - 1))) {
+            setNewEntityArrayParam(entitySize,array, screenWidth, max, min);
+        }
+    }
+
+    private boolean checkIfArrayOutOfScreen(Entity entity) {
+        if (entity.getXPosition() < -10) {
+            return true;
+        }
+        return false;
+    }
+
+    // for coins and sheep
+    private void setNewEntityArrayParam(int entitySize,ArrayList<? extends Entity> array, float screenWidth, int max, int min) {
+        for (int i = 0; i < array.size(); ++i) {
+            Random rand = new Random();
+            int randomValue = rand.nextInt(max) + min;
+            Entity currentEntity = array.get(i);
+            if (i == 0) {
+                currentEntity.setXPosition(screenWidth + randomValue);
+            } else {
+                currentEntity.setXPosition(entitySize*3 + array.get(i - 1).getXPosition() + randomValue);
+            }
         }
     }
 
@@ -250,15 +288,15 @@ public class GameView extends SurfaceView implements Runnable {
             canvas.drawBitmap(cloud.getBitmap(), cloud.getCameraFrame(), cameraWhereToDraw, null);
             canvas.drawBitmap(ground.getBitmap(), ground.getCameraFrame(), cameraWhereToDraw, null);
 
-            //draw bob
-            canvas.drawBitmap(bob.getBitmap(), bob.getFrameToDraw(), bob.getWhereToDrawBob(), null);
+            //draw player
+            canvas.drawBitmap(player.getBitmap(), player.getFrameToDraw(), player.getWhereToDrawPlayer(), null);
 
             //draw sheep array
             //TODO fix frame to draw sheep - not initialized - what?
 
             for (int i = 0; i < sheepArray.size(); ++i) {
                 Sheep currentSheep = sheepArray.get(i); //TODO is this a style to use currentSheep?
-                canvas.drawBitmap(((currentSheep)).getBitmap(), frameToDrawSheep, ((currentSheep)).getWhereToDrawSheep(), null);
+                canvas.drawBitmap(currentSheep.getBitmap(), frameToDrawSheep, currentSheep.getWhereToDrawSheep(), null);
             }
 
             for (int i = 0; i < coinArray.size(); ++i) {
@@ -321,7 +359,7 @@ public class GameView extends SurfaceView implements Runnable {
 
             //  has touched the screen
             case MotionEvent.ACTION_DOWN:
-                bob.setIsJump(true);
+                player.setIsJump(true);
                 break;
             //  has removed finger from screen
             case MotionEvent.ACTION_UP:

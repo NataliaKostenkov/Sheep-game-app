@@ -4,14 +4,16 @@ import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.graphics.RectF;
 
+import java.util.Random;
+
+import static android.R.attr.width;
+
 /**
  * Created by Waveoss on 10/31/2017.
  */
 
-public class Coin {
+public class Coin extends Entity{
 
-    private float xPosition;
-    private float yPosition;
     private Rect frameToDrawCoin;
     private Bitmap bitmapCoin;
     private RectF whereToDrawCoin;
@@ -20,8 +22,7 @@ public class Coin {
 
 
     public Coin(float xPosition, float yPosition, Bitmap bitmapCoin) {
-        this.xPosition = xPosition;
-        this.yPosition = yPosition;
+        super(xPosition, yPosition);
         this.bitmapCoin = Bitmap.createScaledBitmap(bitmapCoin, coinSize, coinSize, false);
         this.whereToDrawCoin = new RectF(xPosition, yPosition, xPosition + coinSize, yPosition + coinSize);
         //this.width = screenWidth;
@@ -29,7 +30,6 @@ public class Coin {
     }
 
     public Bitmap getBitmap() {
-        //updateCoin();
         return bitmapCoin;
     }
 
@@ -40,10 +40,14 @@ public class Coin {
 
     public void updateCoin() {
         xPosition = xPosition - 5;
-        if (xPosition < -500) { // if finished the screen
-            xPosition = 2000;
+        //if (xPosition < -500) { // if finished the screen
+            //xPosition = 2000;
+//            Random rand = new Random();
+//            int randomValue = rand.nextInt(300) + coinSize*3; // max 300 min 200
+            //setNewEntityArrayParam(int size, ArrayList list,float screenSize)
+           // xPosition = (2000 + coinSize);
             passedOver = false;
-        }
+        //}
     }
 
     public void setPassedOver(boolean passedOver) {
