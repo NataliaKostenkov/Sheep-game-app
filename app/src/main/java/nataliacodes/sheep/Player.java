@@ -10,12 +10,12 @@ import android.graphics.RectF;
 
 public class Player extends Entity {
 
-    float playerJumpHeight = 150;
-    float playerGravity = (float) 0.75;   //Whenever the character falls, he will descend at this rate.
-    float playerGround;
-    double velocity = 2 * playerJumpHeight * playerGravity;
-    float playerYVelocity = (float) (Math.sqrt(velocity));
-    float jumpSpeed = 20;
+    private float playerJumpHeight = 150;
+    private float playerGravity = (float) 0.75;   //Whenever the character falls, he will descend at this rate.
+    private float playerGround;
+    private double velocity = 2 * playerJumpHeight * playerGravity;
+    private float playerYVelocity = (float) (Math.sqrt(velocity));
+    private float jumpSpeed = 20;
     private int playerFrameWidth = 230;
     private int playerFrameHeight = 274;
     private static final int frameCount = 5;//= 5;
@@ -24,27 +24,15 @@ public class Player extends Entity {
     private int frameLengthInMilliseconds = 50;
     private Rect spriteFrameToDrawPlayer;//= new Rect(0, 0, 100, 100);
     volatile boolean isJump;//= false;
-    boolean isFall;
-    int numOfFrames = 0;
-
+    private boolean isFall;
+    private int numOfFrames = 0;
     private Bitmap bitmapPlayer;
+
     // Player methods
 
-    // TODO how to use
-//    RectF whereToDrawPlayer;// = new RectF((int) xPosition, (int) yPosition, (int) (xPosition + playerFrameWidth / 2), (int) (yPosition + playerFrameHeight));
-
-//    public void setWhereToDrawPlayer(RectF whereToDrawPlayer) {
-////        whereToDrawPlayer.set((int) getXPosition(), (int) getYPosition()+ playerFrameHeight, (int) (getXPosition() + playerFrameWidth / 2), (int) (getYPosition() ));
-////        whereToDrawPlayer.set((int) getXPosition(), (int) getYPosition()+ playerFrameHeight, (int) (getXPosition() + playerFrameWidth / 2), (int) (getYPosition() ));
-//        whereToDrawPlayer.set((int) xPosition - playerFrameWidth/2, (int) yPosition - playerFrameHeight, (int) xPosition , (int) yPosition );
-//
-//    }
-
     public RectF getWhereToDrawPlayer() {
-//        setWhereToDrawPlayer(whereToDrawPlayer);
         return getWhereToDraw(playerFrameWidth/2, playerFrameHeight);
     }
-
 
     // constructor
     public Player(float xPosition, float yPosition, Bitmap bitmapPlayer) {
@@ -53,13 +41,10 @@ public class Player extends Entity {
         this.spriteFrameToDrawPlayer = new Rect(0, 0, playerFrameWidth, playerFrameHeight);
         this.isJump = false;
         this.isFall = false;
-        //RectF(float left, float top, float right, float bottom)
-//        this.whereToDrawPlayer = new RectF((int) xPosition - playerFrameWidth/2, (int) yPosition - playerFrameHeight, (int) xPosition  , (int) yPosition );
         this.bitmapPlayer = Bitmap.createScaledBitmap(bitmapPlayer, playerFrameWidth, playerFrameHeight, false);
         spriteFrameIndex = 0;
         lastFrameChangeTime = 0;
         playerGround = yPosition;
-//        this.frameCount = 5;
     }
 
 
@@ -88,7 +73,6 @@ public class Player extends Entity {
     public void handleJump() {
         if (isJump) {
             numOfFrames += 2; // acceleration of speed?
-            //yPosition -=  jumpSpeed * Math.sin(Math.PI*(numOfFrames + 90) / 180.0);
             setYPosition((float) (getYPosition() - jumpSpeed * Math.sin(Math.PI * (numOfFrames + 90) / 180.0)));
             if (getYPosition() >= playerGround - 1) {//playerJumpHeight
                 //playeraction = PLAYER_STAND; -switch
@@ -111,6 +95,7 @@ public class Player extends Entity {
      *
      * @return
      */
+
     public Bitmap getBitmap() {
         incrementBitmapPlayer(); // WRONG USAGE
         return bitmapPlayer;

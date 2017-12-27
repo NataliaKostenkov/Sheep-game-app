@@ -38,16 +38,25 @@ public class Coin extends Entity{
         return whereToDrawCoin;
     }
 
-    public void updateCoin() {
-        xPosition = xPosition - 5;
-        //if (xPosition < -500) { // if finished the screen
-            //xPosition = 2000;
-//            Random rand = new Random();
-//            int randomValue = rand.nextInt(300) + coinSize*3; // max 300 min 200
-            //setNewEntityArrayParam(int size, ArrayList list,float screenSize)
-           // xPosition = (2000 + coinSize);
-            passedOver = false;
-        //}
+//    public void updateCoin() {
+//
+//        this.setXPosition(getXPosition() - 5);
+//
+//       // xPosition = xPosition - 5;
+//        if (xPosition < 0) { // if finished the screen
+//            //xPosition = 2000;
+////            Random rand = new Random();
+////            int randomValue = rand.nextInt(300) + coinSize*3; // max 300 min 200
+//            //setNewEntityArrayParam(int size, ArrayList list,float screenSize)
+//           // xPosition = (2000 + coinSize);
+//            passedOver = false;
+//        }
+//    }
+
+    public Coin updateCoin() {
+
+        this.setXPosition(getXPosition() - 5);
+        return this;
     }
 
     public void setPassedOver(boolean passedOver) {
@@ -57,6 +66,7 @@ public class Coin extends Entity{
     public boolean getPassedOver() {
         return passedOver;
     }
+
 
 
 }

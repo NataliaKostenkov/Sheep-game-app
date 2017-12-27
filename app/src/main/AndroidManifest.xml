@@ -30,7 +30,10 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_game"
             android:theme="@style/FullscreenTheme"></activity>
-
+        <activity
+            android:name=".Scoreboard"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:theme="@style/FullscreenTheme"></activity>
     </application>
 
 

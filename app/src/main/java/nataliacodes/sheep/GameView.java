@@ -162,7 +162,7 @@ public class GameView extends SurfaceView implements Runnable {
         ((Activity) getContext()).getWindowManager().getDefaultDisplay().getMetrics(metrics); //TODO do we need this line of code?
         screenHeight = (float) metrics.heightPixels;
         screenWidth = (float) metrics.widthPixels;
-        backgroundWidth = 2 * screenWidth; //TODO init in function,Do I need it here
+        backgroundWidth = 2 * screenWidth; //TODO createScoreboardTable in function,Do I need it here
 
         //cameraX = 0;
         //cameraFrame = new Rect((int) cameraX, 0, (int) (screenWidth + cameraX), (int) screenHeight);
@@ -174,13 +174,13 @@ public class GameView extends SurfaceView implements Runnable {
         hills = new DrawableLayout(screenHeight, screenWidth, 0, R.drawable.hills, this.getResources(), (int) backgroundWidth, hillsSpeed);
         ground = new DrawableLayout(screenHeight, screenWidth, 0, R.drawable.ground, this.getResources(), (int) backgroundWidth, groundSpeed);
 
-        // init player
+        // createScoreboardTable player
         float playerX = screenWidth / 2;
         float playerY = screenHeight * 5 / 6; //TODO fix
         Bitmap playerBitmapImageFactory = BitmapFactory.decodeResource(this.getResources(), R.drawable.player);
         this.player = new Player(playerX, playerY, playerBitmapImageFactory);
 
-        // init sheep
+        // createScoreboardTable sheep
         float sheepX = screenWidth + 15;
         float sheepY = screenHeight * 5 / 6;
         Bitmap bitmapSheep = BitmapFactory.decodeResource(this.getResources(), R.drawable.sheep);
@@ -325,7 +325,7 @@ public class GameView extends SurfaceView implements Runnable {
 //                } catch (InterruptedException ex) {
 //                    Thread.currentThread().interrupt();
 //                }
-//                init();
+//                createScoreboardTable();
 //                run();
 //            }
 

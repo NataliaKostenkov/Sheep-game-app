@@ -3,18 +3,23 @@ package nataliacodes.sheep;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Point;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.DisplayMetrics;
-import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.SurfaceHolder;
 import android.media.MediaPlayer;
-import android.view.WindowManager;
+
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Random;
+import android.content.SharedPreferences;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -23,7 +28,7 @@ import android.view.WindowManager;
 public class GameActivity extends AppCompatActivity {
 
     MediaPlayer music;
-    GameView gameView;
+    GameManager gameManager;
 
     /**
      * Whether or not the system UI should be auto-hidden after
@@ -106,9 +111,9 @@ public class GameActivity extends AppCompatActivity {
         mContentView = findViewById(R.id.fullscreen_content);
 
         // 26.08.17
-        // Initialize gameView and set it as the view
-        gameView = new GameView(this);
-        setContentView(gameView);
+        // Initialize gameManager and set it as the view
+        gameManager = new GameManager(this);
+        setContentView(gameManager);
 
 
         // Set up the user interaction to manually show or hide the system UI.
@@ -189,8 +194,8 @@ public class GameActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        // Tell the gameView resume method to execute
-        gameView.resume();
+        // Tell the gameManager resume method to execute
+        gameManager.resume();
     }
 
     // This method executes when the player quits the game
@@ -198,8 +203,8 @@ public class GameActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
 
-        // Tell the gameView pause method to execute
-        gameView.pause();
+        // Tell the gameManager pause method to execute
+        gameManager.pause();
         music.release();
         finish();
     }

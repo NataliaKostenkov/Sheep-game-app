@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         //02.09.17
-       setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         super.onCreate(savedInstanceState);
         // removes action bar
@@ -48,14 +48,21 @@ public class MainActivity extends AppCompatActivity {
      */
 
     // Called when the user taps the start_button
-    public void startGame (View view) {
+    public void startGame(View view) {
         //Intent game = new Intent(this, GameActivity.class);
-        Intent game = new Intent(this,GameActivity.class);
+        Intent game = new Intent(this, GameActivity.class);
         startActivity(game);
     }
 
+    // Called when the user taps the start_button
+    public void startScoreBoard(View view) {
+        //Intent game = new Intent(this, GameActivity.class);
+        Intent scoreboard = new Intent(this, Scoreboard.class);
+        startActivity(scoreboard);
+    }
+
     // Called when the user taps the quit_button
-    public void quitGame (View view) {
+    public void quitGame(View view) {
 
         finish();
     }
