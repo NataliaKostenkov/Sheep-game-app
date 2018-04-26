@@ -2,8 +2,14 @@
     <string name="app_name">Sheep</string>
 
     <string name="title_activity_game">GameActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <!--<string name="dummy_button">Dummy Button</string>-->
+    <!--<string name="dummy_content">DUMMY\nCONTENT</string>-->
 
+    <string name="player_name">player_name</string>
+    <string name="ok">ok</string>
+    <string name="dialog_ask_name">Enter your name: </string>
     <string name="title_activity_fullscreen">FullscreenActivity</string>
+    <string name="cancel">cancel</string>
+
+
 </resources>

@@ -10,18 +10,18 @@ import android.graphics.RectF;
 
 public class Player extends Entity {
 
-    private float playerJumpHeight = 150;
-    private float playerGravity = (float) 0.75;   //Whenever the character falls, he will descend at this rate.
+    private int playerFrameWidth;// = (int)(230*1.2);//345;//230*1.5;
+    private int playerFrameHeight;// = (int)(274*1.2);//411;//274*1.5;
+    //private float playerJumpHeight = playerFrameHeight/2;//150;
+    //private float playerGravity = (float) 0.75;   //Whenever the character falls, he will descend at this rate.
     private float playerGround;
-    private double velocity = 2 * playerJumpHeight * playerGravity;
-    private float playerYVelocity = (float) (Math.sqrt(velocity));
+    //private double velocity = 2 * playerJumpHeight * playerGravity;
+    //private float playerYVelocity = (float) (Math.sqrt(velocity));
     private float jumpSpeed = 20;
-    private int playerFrameWidth = 230;
-    private int playerFrameHeight = 274;
-    private static final int frameCount = 5;//= 5;
+    private static final int frameCount = 5;
     private int spriteFrameIndex;//= 0;
     private long lastFrameChangeTime;//= 0;
-    private int frameLengthInMilliseconds = 50;
+    private int frameLengthInMilliseconds = 70; // was 50
     private Rect spriteFrameToDrawPlayer;//= new Rect(0, 0, 100, 100);
     volatile boolean isJump;//= false;
     private boolean isFall;
@@ -31,13 +31,15 @@ public class Player extends Entity {
     // Player methods
 
     public RectF getWhereToDrawPlayer() {
-        return getWhereToDraw(playerFrameWidth/2, playerFrameHeight);
+        return getWhereToDraw(playerFrameWidth / 2, playerFrameHeight);
     }
 
-    // constructor
-    public Player(float xPosition, float yPosition, Bitmap bitmapPlayer) {
-        super(xPosition, yPosition);
+    // Player constructor
+    public Player(float xPosition, float yPosition, Bitmap bitmapPlayer, float screenHeight, float screenWidth) {
+        super(xPosition, yPosition, screenHeight, screenWidth);
         this.spriteFrameIndex = 0;
+        playerFrameWidth = (int)(screenWidth/6);
+        playerFrameHeight = (int)(2*screenHeight/7);
         this.spriteFrameToDrawPlayer = new Rect(0, 0, playerFrameWidth, playerFrameHeight);
         this.isJump = false;
         this.isFall = false;
@@ -62,11 +64,14 @@ public class Player extends Entity {
 
         //updateFrame the left and right values of the source of
         //the next frame on the sprite sheet
+//        spriteFrameToDrawPlayer.left = spriteFrameIndex * (playerFrameWidth / 5) - 4;
+//        spriteFrameToDrawPlayer.right = spriteFrameToDrawPlayer.left + (playerFrameWidth / 4) - 12;
+
         spriteFrameToDrawPlayer.left = spriteFrameIndex * (playerFrameWidth / 5) - 4;
         spriteFrameToDrawPlayer.right = spriteFrameToDrawPlayer.left + (playerFrameWidth / 4) - 12;
 
-        this.spriteFrameIndex = spriteFrameIndex;
-        this.spriteFrameToDrawPlayer = spriteFrameToDrawPlayer; //TODO
+        //this.spriteFrameIndex = spriteFrameIndex;
+        //this.spriteFrameToDrawPlayer = spriteFrameToDrawPlayer;
 
     }
 

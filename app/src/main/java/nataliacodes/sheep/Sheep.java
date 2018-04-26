@@ -12,9 +12,10 @@ public class Sheep extends Entity {
 
     private int currentFrame;
     private Rect frameToDrawSheep;
-    private static final int sheepSize = 150; //TODO it supposed to use a specific ratio that depends on the screen size. Think how to do it!
+    private static int sheepSize;// = 150;
     private Bitmap bitmapSheep;
     private float width;
+    private float height;
     private boolean passedOver;
     private int speed;
 
@@ -43,10 +44,12 @@ public class Sheep extends Entity {
         this.currentFrame = currentFrame;
     }
 
-    public Sheep(float xPosition, float yPosition, Bitmap bitmapSheep, float screenWidth, int speed) {
-        super(xPosition, yPosition);
+    public Sheep(float xPosition, float yPosition, Bitmap bitmapSheep, float screenWidth, int speed,float screenHeight) {
+        super(xPosition, yPosition,screenHeight,screenWidth);
+        sheepSize = (int)(screenHeight/7);
         this.bitmapSheep = Bitmap.createScaledBitmap(bitmapSheep, sheepSize, sheepSize, false);
         this.width = screenWidth;
+        //this.height = screenHeight;
         this.passedOver = false;
         this.speed = speed;
     }

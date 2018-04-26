@@ -1,6 +1,9 @@
 
 package nataliacodes.sheep;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
@@ -8,10 +11,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.WindowManager;
 import android.media.MediaPlayer;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
     MediaPlayer music;
+    Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
         // removes notification bar
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
+
 
 //        music = MediaPlayer.create(MainActivity.this,R.raw.music);
 //        music.setLooping(true);
@@ -54,10 +60,10 @@ public class MainActivity extends AppCompatActivity {
         startActivity(game);
     }
 
-    // Called when the user taps the start_button
+    // Called when the user taps the scores_button
     public void startScoreBoard(View view) {
         //Intent game = new Intent(this, GameActivity.class);
-        Intent scoreboard = new Intent(this, Scoreboard.class);
+        Intent scoreboard = new Intent(this, ScoreboardDisplay.class);
         startActivity(scoreboard);
     }
 

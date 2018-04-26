@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+
 import android.content.SharedPreferences;
 
 /**
@@ -113,6 +114,7 @@ public class GameActivity extends AppCompatActivity {
         // 26.08.17
         // Initialize gameManager and set it as the view
         gameManager = new GameManager(this);
+
         setContentView(gameManager);
 
 
@@ -130,7 +132,7 @@ public class GameActivity extends AppCompatActivity {
         // while interacting with the UI.
         //findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
 
-        music = MediaPlayer.create(GameActivity.this,R.raw.music);
+        music = MediaPlayer.create(GameActivity.this, R.raw.music);
         music.setLooping(true);
         music.start();
     }
@@ -208,18 +210,5 @@ public class GameActivity extends AppCompatActivity {
         music.release();
         finish();
     }
-
-/*  @Override
-    protected void onPause() {
-        super.onPause();
-        music.release();
-        finish();
-    }*/
-
-
-//    DisplayMetrics metrics = new DisplayMetrics();
-//    WindowManager windowManager = (WindowManager) context
-//            .getSystemService(Context.WINDOW_SERVICE);
-//        windowManager.getDefaultDisplay().getMetrics(metrics);
 
 }

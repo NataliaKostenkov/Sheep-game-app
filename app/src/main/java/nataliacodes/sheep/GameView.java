@@ -162,7 +162,7 @@ public class GameView extends SurfaceView implements Runnable {
         ((Activity) getContext()).getWindowManager().getDefaultDisplay().getMetrics(metrics); //TODO do we need this line of code?
         screenHeight = (float) metrics.heightPixels;
         screenWidth = (float) metrics.widthPixels;
-        backgroundWidth = 2 * screenWidth; //TODO createScoreboardTable in function,Do I need it here
+        backgroundWidth = 2 * screenWidth; //TODO displayScoreboardTable in function,Do I need it here
 
         //cameraX = 0;
         //cameraFrame = new Rect((int) cameraX, 0, (int) (screenWidth + cameraX), (int) screenHeight);
@@ -174,13 +174,13 @@ public class GameView extends SurfaceView implements Runnable {
         hills = new DrawableLayout(screenHeight, screenWidth, 0, R.drawable.hills, this.getResources(), (int) backgroundWidth, hillsSpeed);
         ground = new DrawableLayout(screenHeight, screenWidth, 0, R.drawable.ground, this.getResources(), (int) backgroundWidth, groundSpeed);
 
-        // createScoreboardTable player
+        // displayScoreboardTable player
         float playerX = screenWidth / 2;
         float playerY = screenHeight * 5 / 6; //TODO fix
         Bitmap playerBitmapImageFactory = BitmapFactory.decodeResource(this.getResources(), R.drawable.player);
-        this.player = new Player(playerX, playerY, playerBitmapImageFactory);
+        this.player = new Player(playerX, playerY, playerBitmapImageFactory,screenWidth, screenHeight);
 
-        // createScoreboardTable sheep
+        // displayScoreboardTable sheep
         float sheepX = screenWidth + 15;
         float sheepY = screenHeight * 5 / 6;
         Bitmap bitmapSheep = BitmapFactory.decodeResource(this.getResources(), R.drawable.sheep);
@@ -190,14 +190,14 @@ public class GameView extends SurfaceView implements Runnable {
         for (int i = 0; i < sheepArraySize; ++i) { //TODO is the loop correct using sheepArraySize
             Random rand = new Random();
             sheepDiffLength = rand.nextInt(200) + 50; // max 200 min 50
-            sheepArray.add(i, new Sheep(sheepFirstPlaceX + i * sheepSafeLength + sheepDiffLength, sheepY, bitmapSheep/*getBitmap()?*/, screenWidth, groundSpeed));
+            sheepArray.add(i, new Sheep(sheepFirstPlaceX + i * sheepSafeLength + sheepDiffLength, sheepY, bitmapSheep/*getBitmap()?*/, screenWidth, groundSpeed,screenHeight));
         }
 
         Bitmap bitmapCoin = BitmapFactory.decodeResource(this.getResources(), R.drawable.coin);
 
         this.coinArray = new ArrayList(coinArraySize);
         for (int i = 0; i < coinArraySize; ++i) {
-            coinArray.add(i, new Coin(coinFirstPlaceX + i * coinSafeLength, coinY, bitmapCoin));
+            coinArray.add(i, new Coin(coinFirstPlaceX + i * coinSafeLength, coinY, bitmapCoin,screenHeight,screenWidth));
         }
 
         frameLengthInMilliseconds = 50;
@@ -325,7 +325,7 @@ public class GameView extends SurfaceView implements Runnable {
 //                } catch (InterruptedException ex) {
 //                    Thread.currentThread().interrupt();
 //                }
-//                createScoreboardTable();
+//                displayScoreboardTable();
 //                run();
 //            }
 

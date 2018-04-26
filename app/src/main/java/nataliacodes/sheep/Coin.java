@@ -17,12 +17,13 @@ public class Coin extends Entity{
     private Rect frameToDrawCoin;
     private Bitmap bitmapCoin;
     private RectF whereToDrawCoin;
-    private int coinSize = 100;
+    private int coinSize;// = 100;
     private boolean passedOver;
 
 
-    public Coin(float xPosition, float yPosition, Bitmap bitmapCoin) {
-        super(xPosition, yPosition);
+    public Coin(float xPosition, float yPosition, Bitmap bitmapCoin,float screenHeight,float screenWidth) {
+        super(xPosition, yPosition,screenHeight,screenWidth);
+        coinSize = (int)(2*screenHeight/21);
         this.bitmapCoin = Bitmap.createScaledBitmap(bitmapCoin, coinSize, coinSize, false);
         this.whereToDrawCoin = new RectF(xPosition, yPosition, xPosition + coinSize, yPosition + coinSize);
         //this.width = screenWidth;
