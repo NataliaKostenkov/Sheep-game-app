@@ -9,9 +9,11 @@ package nataliacodes.sheep;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SyncContext;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -31,6 +33,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -101,7 +104,7 @@ public class GameManager extends SurfaceView implements Runnable {
     CharSequence text = "Got it!";
     private Toast toast;
 
-    private AtomicBoolean finished;
+    private Boolean finished = false;
 
     private final Object lock = new Object();
 
@@ -118,47 +121,52 @@ public class GameManager extends SurfaceView implements Runnable {
 
         sound = new SoundPlayer(context);
 
-//        // Defines a Handler object that's attached to the UI thread
-//        mHandler = new Handler(Looper.getMainLooper()) {
-//            @Override
-//            public void handleMessage(Message msg) {
-////                super.handleMessage(msg);
-//                // Use the Builder class for convenient dialog construction
-//                AddNewScoreToDB.Builder builder = new AddNewScoreToDB.Builder(context);
-////                LayoutInflater inflater = getActivity().getLayoutInflater();
-//                LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//                builder.setView(inflater.inflate(R.layout.dialog_name, null));
-////                builder.setMessage(R.string.dialog_ask_name)
-//
-//                final EditText input = new EditText(context);
-//                builder.setView(input);
-//
-//                builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int id) {
-//                        String value = input.getText().toString();
-//                        name = value;
-//
-////                        setName(value);
-//
-////                        finished = true;
-//                        Toast toast = Toast.makeText(context, text, LENGTH_LONG);
-//                        toast.show();
-//
-//                    }
-//                });
-////                            .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-////                                public void onClick(DialogInterface dialog, int id) {
-////                                    // User cancelled the dialog
-////                                }
-////                            });
-//                // Create the AddNewScoreToDB object
-////                builder.create();
-//
-//                AddNewScoreToDB dialog = builder.create();
-//
-//                dialog.show();
-//            }
-//        };
+        // Defines a Handler object that's attached to the UI thread
+        mHandler = new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message msg) {
+//                super.handleMessage(msg);
+                // Use the Builder class for convenient dialog construction
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+//                LayoutInflater inflater = getActivity().getLayoutInflater();
+                LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                builder.setView(inflater.inflate(R.layout.dialog_name, null));
+//                builder.setMessage(R.string.dialog_ask_name)
+
+                final EditText input = new EditText(context);
+                builder.setView(input);
+
+                builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        String value = input.getText().toString();
+                        name = value;
+                        db.addScore(new Score(name, score), null);
+
+//                        setName(value);
+
+//                        finished = true;
+                        Toast toast = Toast.makeText(context, text, LENGTH_LONG);
+                        toast.show();
+
+                        Intent main = new Intent(context, MainActivity.class);
+                        context.startActivity(main);
+
+                    }
+                });
+//                            .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+//                                public void onClick(DialogInterface dialog, int id) {
+//                                    // User cancelled the dialog
+//                                }
+//                            });
+                // Create the AddNewScoreToDB object
+//                builder.create();
+
+                AlertDialog dialog = builder.create();
+
+                dialog.show();
+            }
+        };
+
     }
 
     //
@@ -388,7 +396,7 @@ public class GameManager extends SurfaceView implements Runnable {
 
             drawScore(paint);
 
-            if (ifCollision()) {
+            if (ifCollision()) { //TODO move to update
                 handleGameOver(paint, getContext());
 //                run(); #TODO noet that it was enabled - 26.04
             } else {
@@ -412,12 +420,17 @@ public class GameManager extends SurfaceView implements Runnable {
 
     private void handleGameOver(Paint paint, Context context) {
 
-//        mHandler.post(null);
+        mHandler.post(null);
+
+//        while(name != null) {
 //        db.addScore(new Score(name, score), null);
+//        }
+
+
         //1) get the name of the user
-        String username = GetUserNameActivity.getUserName();
+//        String username = GetUserNameActivity.getUserName();
         //2) save the username and the score to the db (by utilizing the same db handler)
-        AddNewScoreToDB newScoreHandler = new AddNewScoreToDB(score, username);
+//        AddNewScoreToDB newScoreHandler = new AddNewScoreToDB(score, username);
 
         paint.setColor(Color.RED);
         paint.setTextSize(300);
@@ -425,6 +438,17 @@ public class GameManager extends SurfaceView implements Runnable {
         surfaceHolder.unlockCanvasAndPost(canvas);
 
         playing = false;
+
+//        if (finished) {
+//            Intent main = new Intent(this.getContext(), MainActivity.class);
+//            this.getContext().startActivity(main);
+//        }
+
+//    public void startScoreBoard(View view) {
+//        //Intent game = new Intent(this, GameActivity.class);
+//        Intent scoreboard = new Intent(this, ScoreboardDisplay.class);
+//        startActivity(scoreboard);
+//    }
 
 //        }
 
@@ -485,6 +509,7 @@ public class GameManager extends SurfaceView implements Runnable {
         playing = true;
         gameThread = new Thread(this);
         gameThread.start();
+//        run();
     }
 
     // The SurfaceView class implements onTouchListener
