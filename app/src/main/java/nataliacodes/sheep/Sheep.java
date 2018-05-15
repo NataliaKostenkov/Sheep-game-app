@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.RectF;
 
 /**
- * Created by Waveoss on 9/30/2017.
+ * Created on 9/30/2017.
  */
 
 public class Sheep extends Entity {
