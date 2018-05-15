@@ -8,7 +8,7 @@ import android.view.Display;
 import java.util.Random;
 
 /**
- * Created by Waveoss on 10/1/2017.
+ * Created on 10/1/2017.
  */
 
 public class Utils {
