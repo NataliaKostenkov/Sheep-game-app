@@ -9,7 +9,7 @@ import java.util.Random;
 import static android.R.attr.width;
 
 /**
- * Created by Waveoss on 10/31/2017.
+ * Created on 10/31/2017.
  */
 
 public class Coin extends Entity{
