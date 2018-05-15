@@ -5,7 +5,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 
 /**
- * Created by Waveoss on 10/6/2017.
+ * Created on 10/6/2017.
  */
 
 public class Player extends Entity {
